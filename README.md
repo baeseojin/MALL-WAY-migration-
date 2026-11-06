@@ -7,7 +7,7 @@
 3개 층의 매장과 편의시설을 탐색하고, 현재 위치에서 목적지 입구까지 경로를 보여주는 Windows WPF 프로젝트
 
 ![C#](https://img.shields.io/badge/C%23-512BD4?style=flat-square&logo=csharp&logoColor=white)
-![.NET Framework](https://img.shields.io/badge/.NET_Framework-4.8-512BD4?style=flat-square&logo=dotnet&logoColor=white)
+![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=dotnet&logoColor=white)
 ![WPF](https://img.shields.io/badge/UI-WPF-0078D4?style=flat-square)
 ![MVVM Toolkit](https://img.shields.io/badge/CommunityToolkit.Mvvm-8.4.0-235274?style=flat-square)
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white)
@@ -29,10 +29,11 @@ CommunityToolkit.Mvvm으로 화면 상태와 명령을 연결하며, WPF 앱이 
 
 ## 🔁 MVVM Light에서 Toolkit으로 마이그레이션
 
-[원본 기준 커밋 330323b](https://github.com/baeseojin/MALL-WAY/commit/330323bcc166d5d533eb93b6172b4495dac04445)의 추적 파일을 가져와 마이그레이션했습니다. .NET Framework 4.8, XAML, JSON 설정, SQLite 스키마와 길찾기 알고리즘을 유지해 MVVM 라이브러리 전환에 따른 차이를 확인할 수 있습니다.
+[원본 기준 커밋 330323b](https://github.com/baeseojin/MALL-WAY/commit/330323bcc166d5d533eb93b6172b4495dac04445)의 추적 파일을 가져와 마이그레이션했습니다. 실행 대상을 .NET 8 WPF로 전환했습니다. XAML, JSON 설정, SQLite 스키마와 길찾기 알고리즘은 원본과 같습니다.
 
 | 구분 | MVVM Light 버전 | CommunityToolkit.Mvvm 버전 |
 | --- | --- | --- |
+| 대상 프레임워크 | .NET Framework 4.8 (`net48`) | .NET 8 WPF (`net8.0-windows`) |
 | ViewModel 기반 클래스 | ViewModelBase | ObservableObject |
 | 변경 알림 | Set, RaisePropertyChanged | SetProperty, OnPropertyChanged |
 | 버튼 명령 | GalaSoft RelayCommand | Toolkit RelayCommand |
@@ -85,7 +86,7 @@ flowchart LR
 
 | 구분 | 기술 |
 | --- | --- |
-| 언어 / 실행 환경 | C#, .NET Framework 4.8, Windows x64 |
+| 언어 / 실행 환경 | C#, .NET 8 WPF, Windows x64 |
 | UI | WPF, XAML, Canvas, Viewbox, 데이터 바인딩 |
 | MVVM | CommunityToolkit.Mvvm 8.4.0, ObservableObject, RelayCommand |
 | 객체 연결 | App.xaml.cs에서 생성자 주입 |
@@ -141,8 +142,8 @@ flowchart TB
 
 ### 준비 환경
 
-- Windows x64와 .NET Framework 4.8 실행 환경
-- .NET Framework 4.8 개발자 팩과 WPF 빌드를 지원하는 .NET SDK
+- Windows x64와 .NET 8 Desktop Runtime (x64)
+- 빌드에는 .NET 8 SDK 또는 .NET 8을 대상으로 빌드할 수 있는 상위 SDK
 - Visual Studio 사용 시 .NET 데스크톱 개발 워크로드
 - 첫 NuGet 복원을 위한 네트워크 연결
 
@@ -164,14 +165,14 @@ dotnet build .\MALL-WAY.sln
 ### 3. 앱 실행
 
 ```powershell
-& .\MALL-WAY\bin\Debug\net48\win-x64\MALL-WAY.exe
+& .\MALL-WAY\bin\Debug\net8.0-windows\win-x64\MALL-WAY.exe
 ```
 
 Release 구성은 다음 명령으로 빌드하고 실행합니다.
 
 ```powershell
 dotnet build .\MALL-WAY.sln -c Release
-& .\MALL-WAY\bin\Release\net48\win-x64\MALL-WAY.exe
+& .\MALL-WAY\bin\Release\net8.0-windows\win-x64\MALL-WAY.exe
 ```
 
 첫 실행에는 출력 폴더에 DB를 생성할 쓰기 권한이 필요합니다. 다른 PC나 폴더에서 실행할 때는 DLL, 설정, 초기 SQL을 포함한 **출력 폴더 전체**를 복사합니다.
@@ -233,7 +234,7 @@ MALL-WAY-migration-/
 
 | 항목 | 결과 |
 | --- | --- |
-| Debug / Release 빌드 | 경고 0 · 오류 0 |
+| .NET 8 Debug / Release 빌드 | 경고 0 · 오류 0 |
 | Release 시작 경로 | 창 열기와 SQLite 생성 확인 |
 | 최단 비용 비교 | 31개 노드의 모든 출발·도착 조합 961개를 별도 계산과 비교해 일치 |
 | 길찾기 통합 검증 | 경로 연속성, 비용 합계, 15개 목적지 흐름 등을 포함한 6,753개 확인 통과 |
