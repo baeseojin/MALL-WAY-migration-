@@ -13,7 +13,7 @@
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white)
 ![Newtonsoft.Json](https://img.shields.io/badge/JSON-Newtonsoft.Json-4E7A3D?style=flat-square)
 
-[주요 기능](#-주요-기능) · [설계 구조](#-설계-구조) · [실행 방법](#-실행-방법) · [검증](#-검증)
+[마이그레이션](#-mvvm-light에서-toolkit으로-마이그레이션) · [주요 기능](#-주요-기능) · [설계 구조](#-설계-구조) · [실행 방법](#-실행-방법) · [검증](#-검증)
 
 </div>
 
@@ -26,31 +26,6 @@ MALL-WAY는 C#과 WPF로 구현한 백화점 길안내 키오스크입니다. �
 CommunityToolkit.Mvvm으로 화면 상태와 명령을 연결하며, WPF 앱이 로컬 SQLite 파일에 직접 접근합니다. 키오스크의 시작 위치와 기본 표시 층은 JSON 설정으로 관리합니다.
 
 가상 백화점인 **아르온 백화점**을 대상으로 하며, 매장명과 지도 배치는 시연용으로 구성했습니다.
-
-## ✨ 주요 기능
-
-| 영역 | 구현 내용 |
-| --- | --- |
-| 🔎 매장 검색 | 전체 층의 이름 부분 검색, 카테고리와 검색어 동시 적용, 검색 초기화 |
-| 🗺️ 층별 지도 | 1F·2F·3F 전환, WPF 벡터 지도, 매장과 이동 시설 표시 |
-| 📍 현재 위치 | 설정에 지정된 1층 키오스크를 빨간 표식으로 표시 |
-| 🏪 매장 상세 | 이름, 카테고리, 층과 구역, 영업시간 표시 |
-| 🎯 목적지 선택 | 검색 결과와 지도에서 선택, 해당 층으로 이동, 금색 강조 |
-| 🚻 편의시설 | 화장실·수유실·고객센터·주차장 연결 통로 바로 찾기 |
-| 🧭 최단 경로 | 다익스트라로 이동 비용이 가장 낮은 경로 계산 |
-| 🛗 층간 안내 | 엘리베이터·에스컬레이터 탑승 위치와 하차층 안내 |
-| 🔵 경로 표시 | 층별 녹색 이동 경로, 도착 지점, 경로 지우기 |
-| ⚠️ 상태 처리 | 검색 결과 없음, 연결된 경로 없음, 지도 조회 오류 안내 |
-
-### 백화점 구성
-
-| 층 | 구성 | 가상 매장과 편의시설 |
-| --- | --- | --- |
-| 1F | 푸드코트 | 한끼마루, 소담면가, 구름다방, 고객센터, 화장실, 주차장 연결 통로 |
-| 2F | 패션 | 모노핏, 온결웨어, 리프스튜디오, 스텝로그, 수유실, 화장실 |
-| 3F | 영화관 | 루미시네마, 별빛스낵, 화장실 |
-
-각 층에는 중앙 엘리베이터와 동쪽 에스컬레이터가 있습니다. 초기 데이터는 매장·편의시설 15곳, 이동 노드 31개, 양방향 연결 32개로 구성합니다.
 
 ## 🔁 MVVM Light에서 Toolkit으로 마이그레이션
 
@@ -65,6 +40,31 @@ CommunityToolkit.Mvvm으로 화면 상태와 명령을 연결하며, WPF 앱이 
 | 앱 시작 구성 | SimpleIoc 등록 및 CommonServiceLocator 조회 | App.xaml.cs에서 객체 생성 후 생성자로 전달 |
 
 속성과 명령의 공개 이름을 유지해 기존 XAML 바인딩을 사용합니다. 속성과 명령은 직접 선언하는 형태로 마이그레이션했습니다.
+
+## ✨ 주요 기능
+
+| 영역 | 구현 내용 |
+| --- | --- |
+| 🔎 매장 검색 | 전체 층의 이름 부분 검색, 카테고리와 검색어 동시 적용, 검색 초기화 |
+| 🗺️ 층별 지도 | 1F·2F·3F 전환, WPF 벡터 지도, 매장과 이동 시설 표시 |
+| 📍 현재 위치 | 설정에 지정된 1층 키오스크를 빨간 표식으로 표시 |
+| 🏪 매장 상세 | 이름, 층과 구역, 영업시간 표시 |
+| 🎯 목적지 선택 | 검색 결과와 지도에서 선택, 해당 층으로 이동, 금색 강조 |
+| 🚻 편의시설 | 화장실·수유실·고객센터·주차장 연결 통로 바로 찾기 |
+| 🧭 최단 경로 | 다익스트라로 이동 비용이 가장 낮은 경로 계산 |
+| 🛗 층간 안내 | 엘리베이터·에스컬레이터 탑승 위치와 하차층 안내 |
+| 🟢 경로 표시 | 층별 녹색 이동 경로, 도착 지점, 경로 지우기 |
+| ⚠️ 상태 처리 | 검색 결과 없음, 연결된 경로 없음, 지도 조회 오류 안내 |
+
+### 백화점 구성
+
+| 층 | 구성 | 가상 매장과 편의시설 |
+| --- | --- | --- |
+| 1F | 푸드코트 | 한끼마루, 소담면가, 구름다방, 고객센터, 화장실, 주차장 연결 통로 |
+| 2F | 패션 | 모노핏, 온결웨어, 리프스튜디오, 스텝로그, 수유실, 화장실 |
+| 3F | 영화관 | 루미시네마, 별빛스낵, 화장실 |
+
+각 층에는 중앙 엘리베이터와 동쪽 에스컬레이터가 있습니다. 초기 데이터는 매장·편의시설 15곳, 이동 노드 31개, 양방향 연결 32개로 구성합니다.
 
 ## 🔄 이용 흐름
 
@@ -100,10 +100,9 @@ flowchart LR
 
 ```mermaid
 flowchart TB
-    APP[App · 시작과 의존성 등록] --> SETTINGS[KioskSettings · JSON 역직렬화]
+    APP[App · 설정 로드와 객체 생성] --> SETTINGS[KioskSettings · JSON 역직렬화]
     SETTINGS --> JSON[kiosk-settings.json]
-    APP --> IOC[SimpleIoc · CommonServiceLocator]
-    IOC --> VM[MainViewModel · 화면 상태와 명령]
+    APP -->|생성자 주입| VM[MainViewModel · 화면 상태와 명령]
     VIEW[MainWindow · XAML] <-->|DataContext · 바인딩| VM
     VM --> REPO[MapRepository · 지도와 매장 조회]
     VM --> ROUTE[RouteService · 다익스트라와 안내 생성]
@@ -114,9 +113,9 @@ flowchart TB
 
 ### MVVM과 화면 갱신
 
-`App.xaml.cs`에서 설정과 저장소를 준비하고, 설정, 저장소, 경로 서비스를 `MainViewModel`의 생성자에 전달합니다. 생성한 ViewModel을 창의 `DataContext`에 지정합니다.
+`App.xaml.cs`에서 설정을 읽고 SQLite 저장소를 초기화합니다. 이어서 `RouteService`를 생성하고, 설정·저장소·경로 서비스를 `new MainViewModel(settings, repository, routeService)`에 전달합니다. 생성한 ViewModel은 창의 `DataContext`에 지정합니다. [앱 시작 코드](MALL-WAY/App.xaml.cs)
 
-`MainViewModel`은 표시할 지도, 검색 조건, 선택한 매장, 경로를 관리합니다. 버튼은 `RelayCommand`에 연결하고, 상태를 변경하면 `OnPropertyChanged`로 XAML에 알립니다. 매장 강조는 `MapPlace.IsSelected`와 XAML의 `DataTrigger`로 처리합니다.
+`MainViewModel`은 표시할 지도, 검색 조건, 선택한 매장, 경로를 관리합니다. 검색어나 카테고리 변경은 `SetProperty`로 알리고, 층이나 경로를 바꿀 때는 관련 속성에 `OnPropertyChanged`를 호출합니다. 목적지 선택이나 경로 변경으로 버튼 활성화 조건이 달라지면 Toolkit `RelayCommand`의 `NotifyCanExecuteChanged`를 호출합니다. 매장 강조는 `MapPlace.IsSelected`와 XAML의 `DataTrigger`로 처리합니다. [ViewModel 코드](MALL-WAY/MainViewModel.cs)
 
 ### 지도와 경로 데이터
 
@@ -132,7 +131,7 @@ flowchart TB
 ## 💡 구현 포인트
 
 - **설정과 지도 데이터 연결** — JSON에서 출발 노드 ID를 읽고 SQLite에서 실제 좌표를 조회합니다. 기본 표시 층과 키오스크의 실제 층을 따로 관리합니다.
-- **전체 층 검색** — 시작 시 읽은 매장 목록을 메모리에서 필터링합니다. 결과에 층과 구역을 표시해 이름이 같은 층별 화장실을 구분합니다.
+- **전체 층 검색** — 시작 시 읽은 매장 목록을 메모리에서 필터링합니다. 결과에 층을 표시해 이름이 같은 층별 화장실을 구분합니다.
 - **층간 경로 계산** — 복도와 층간 연결에 지정한 비용을 함께 비교합니다. 연속된 엘리베이터 이동은 안내를 묶고, 에스컬레이터는 층별 탑승·하차를 안내합니다.
 - **선택 상태 관리** — 경로 안내 중 층 전환에도 목적지를 유지하고, 목적지 변경 시 이전 경로를 해제합니다. 지도 조회가 실패하면 기존 화면을 유지합니다.
 - **DB 초기화** — 트랜잭션에서 테이블과 초기 데이터를 만들고 SQLite의 `user_version`을 1로 기록합니다. 다음 실행부터는 기존 DB를 사용합니다.
@@ -151,7 +150,7 @@ flowchart TB
 
 ```powershell
 git clone https://github.com/baeseojin/MALL-WAY-migration-.git
-cd MALL-WAY
+cd MALL-WAY-migration-
 ```
 
 ### 2. 빌드
@@ -211,13 +210,13 @@ dotnet build .\MALL-WAY.sln -c Release
 ## 📁 프로젝트 구조
 
 ```text
-MALL-WAY/
+MALL-WAY-migration-/
 ├── MALL-WAY.sln
 ├── README.md
 ├── .gitignore
 └── MALL-WAY/
     ├── MALL-WAY.csproj
-    ├── App.xaml / App.xaml.cs       # 시작 · 설정 · 의존성 등록
+    ├── App.xaml / App.xaml.cs       # 시작 · 설정 · 생성자 주입
     ├── MainWindow.xaml / .xaml.cs   # 화면 · 지도 레이어 · 바인딩
     ├── MainViewModel.cs            # 검색 · 층 전환 · 선택 · 길찾기 명령
     ├── KioskSettings.cs            # JSON 읽기와 설정 검사
