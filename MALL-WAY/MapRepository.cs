@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Data.Sqlite;
-using GalaSoft.MvvmLight;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MallWay
 {
@@ -213,7 +213,7 @@ namespace MallWay
         public bool IsSelected
         {
             get => isSelected;
-            set => Set(ref isSelected, value);
+            set => SetProperty(ref isSelected, value);
         }
         public string Name { get; set; }
         public string Category { get; set; }

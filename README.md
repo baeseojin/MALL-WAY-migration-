@@ -2,14 +2,14 @@
 
 # 🏬 MALL-WAY
 
-**원하는 매장 검색부터 층간 이동까지 안내하는 백화점 길찾기 키오스크**
+**백화점 길찾기 키오스크의 CommunityToolkit.Mvvm 마이그레이션**
 
 3개 층의 매장과 편의시설을 탐색하고, 현재 위치에서 목적지 입구까지 경로를 보여주는 Windows WPF 프로젝트
 
 ![C#](https://img.shields.io/badge/C%23-512BD4?style=flat-square&logo=csharp&logoColor=white)
 ![.NET Framework](https://img.shields.io/badge/.NET_Framework-4.8-512BD4?style=flat-square&logo=dotnet&logoColor=white)
 ![WPF](https://img.shields.io/badge/UI-WPF-0078D4?style=flat-square)
-![MVVM Light](https://img.shields.io/badge/MVVM-Light-235274?style=flat-square)
+![MVVM Toolkit](https://img.shields.io/badge/CommunityToolkit.Mvvm-8.4.0-235274?style=flat-square)
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white)
 ![Newtonsoft.Json](https://img.shields.io/badge/JSON-Newtonsoft.Json-4E7A3D?style=flat-square)
 
@@ -23,7 +23,7 @@
 
 MALL-WAY는 C#과 WPF로 구현한 백화점 길안내 키오스크입니다. 매장명을 검색하거나 카테고리와 층별 지도에서 목적지를 선택하면 위치와 영업시간을 확인할 수 있습니다. 길찾기를 실행하면 1층 키오스크에서 목적지 입구까지 다익스트라로 경로를 계산하고, 층별 지도와 이동 안내를 제공합니다.
 
-MVVM Light와 CommonServiceLocator로 화면 상태와 객체 생성을 연결하며, WPF 앱이 로컬 SQLite 파일에 직접 접근합니다. 키오스크의 시작 위치와 기본 표시 층은 JSON 설정으로 관리합니다.
+CommunityToolkit.Mvvm으로 화면 상태와 명령을 연결하며, WPF 앱이 로컬 SQLite 파일에 직접 접근합니다. 키오스크의 시작 위치와 기본 표시 층은 JSON 설정으로 관리합니다.
 
 가상 백화점인 **아르온 백화점**을 대상으로 하며, 매장명과 지도 배치는 시연용으로 구성했습니다.
 
@@ -39,7 +39,7 @@ MVVM Light와 CommonServiceLocator로 화면 상태와 객체 생성을 연결�
 | 🚻 편의시설 | 화장실·수유실·고객센터·주차장 연결 통로 바로 찾기 |
 | 🧭 최단 경로 | 다익스트라로 이동 비용이 가장 낮은 경로 계산 |
 | 🛗 층간 안내 | 엘리베이터·에스컬레이터 탑승 위치와 하차층 안내 |
-| 🔵 경로 표시 | 층별 파란 이동 경로, 도착 지점, 경로 지우기 |
+| 🔵 경로 표시 | 층별 녹색 이동 경로, 도착 지점, 경로 지우기 |
 | ⚠️ 상태 처리 | 검색 결과 없음, 연결된 경로 없음, 지도 조회 오류 안내 |
 
 ### 백화점 구성
@@ -51,6 +51,20 @@ MVVM Light와 CommonServiceLocator로 화면 상태와 객체 생성을 연결�
 | 3F | 영화관 | 루미시네마, 별빛스낵, 화장실 |
 
 각 층에는 중앙 엘리베이터와 동쪽 에스컬레이터가 있습니다. 초기 데이터는 매장·편의시설 15곳, 이동 노드 31개, 양방향 연결 32개로 구성합니다.
+
+## 🔁 MVVM Light에서 Toolkit으로 마이그레이션
+
+[원본 기준 커밋 330323b](https://github.com/baeseojin/MALL-WAY/commit/330323bcc166d5d533eb93b6172b4495dac04445)의 추적 파일을 가져와 마이그레이션했습니다. .NET Framework 4.8, XAML, JSON 설정, SQLite 스키마와 길찾기 알고리즘을 유지해 MVVM 라이브러리 전환에 따른 차이를 확인할 수 있습니다.
+
+| 구분 | MVVM Light 버전 | CommunityToolkit.Mvvm 버전 |
+| --- | --- | --- |
+| ViewModel 기반 클래스 | ViewModelBase | ObservableObject |
+| 변경 알림 | Set, RaisePropertyChanged | SetProperty, OnPropertyChanged |
+| 버튼 명령 | GalaSoft RelayCommand | Toolkit RelayCommand |
+| 명령 활성화 갱신 | RaiseCanExecuteChanged | NotifyCanExecuteChanged |
+| 앱 시작 구성 | SimpleIoc 등록 및 CommonServiceLocator 조회 | App.xaml.cs에서 객체 생성 후 생성자로 전달 |
+
+속성과 명령의 공개 이름을 유지해 기존 XAML 바인딩을 사용합니다. 속성과 명령은 직접 선언하는 형태로 마이그레이션했습니다.
 
 ## 🔄 이용 흐름
 
@@ -73,12 +87,12 @@ flowchart LR
 | --- | --- |
 | 언어 / 실행 환경 | C#, .NET Framework 4.8, Windows x64 |
 | UI | WPF, XAML, Canvas, Viewbox, 데이터 바인딩 |
-| MVVM | MVVM Light 5.4.1.1, ViewModelBase, ObservableObject, RelayCommand |
-| 객체 연결 | SimpleIoc, CommonServiceLocator 2.0.2 |
+| MVVM | CommunityToolkit.Mvvm 8.4.0, ObservableObject, RelayCommand |
+| 객체 연결 | App.xaml.cs에서 생성자 주입 |
 | 설정 | Newtonsoft.Json 13.0.4 |
 | 데이터 저장 | SQLite, Microsoft.Data.Sqlite 8.0.30 |
 | 경로 계산 | 다익스트라, 양방향 가중 그래프 |
-| 버전 관리 | Git, main과 feature/development |
+| 버전 관리 | Git, 마이그레이션 저장소 main |
 
 패키지 참조와 빌드 설정은 [프로젝트 파일](MALL-WAY/MALL-WAY.csproj)에서 확인할 수 있습니다.
 
@@ -100,9 +114,9 @@ flowchart TB
 
 ### MVVM과 화면 갱신
 
-`App.xaml.cs`에서 설정과 저장소를 준비하고, SimpleIoc에 객체와 서비스를 등록합니다. CommonServiceLocator로 가져온 `MainViewModel`을 창의 `DataContext`에 지정합니다.
+`App.xaml.cs`에서 설정과 저장소를 준비하고, 설정, 저장소, 경로 서비스를 `MainViewModel`의 생성자에 전달합니다. 생성한 ViewModel을 창의 `DataContext`에 지정합니다.
 
-`MainViewModel`은 표시할 지도, 검색 조건, 선택한 매장, 경로를 관리합니다. 버튼은 `RelayCommand`에 연결하고, 상태를 변경하면 `RaisePropertyChanged`로 XAML에 알립니다. 매장 강조는 `MapPlace.IsSelected`와 XAML의 `DataTrigger`로 처리합니다.
+`MainViewModel`은 표시할 지도, 검색 조건, 선택한 매장, 경로를 관리합니다. 버튼은 `RelayCommand`에 연결하고, 상태를 변경하면 `OnPropertyChanged`로 XAML에 알립니다. 매장 강조는 `MapPlace.IsSelected`와 XAML의 `DataTrigger`로 처리합니다.
 
 ### 지도와 경로 데이터
 
@@ -136,7 +150,7 @@ flowchart TB
 ### 1. 소스 가져오기
 
 ```powershell
-git clone https://github.com/baeseojin/MALL-WAY.git
+git clone https://github.com/baeseojin/MALL-WAY-migration-.git
 cd MALL-WAY
 ```
 
@@ -168,7 +182,7 @@ dotnet build .\MALL-WAY.sln -c Release
 1. 시작 화면에서 1층 지도와 빨간 현재 위치를 확인합니다.
 2. `모노`를 검색하고 모노핏을 선택해 2층 지도, 금색 강조, 영업시간을 확인합니다.
 3. 검색 초기화 후 루미시네마를 검색해 선택하고 길찾기를 누릅니다.
-4. 1층에서 중앙 엘리베이터까지의 파란 경로를 확인하고, 3F를 눌러 영화관 입구까지의 경로를 봅니다.
+4. 1층에서 중앙 엘리베이터까지의 녹색 경로를 확인하고, 3F를 눌러 영화관 입구까지의 경로를 봅니다.
 5. 화장실 바로가기에서 3층 화장실을 선택하고 길찾기를 누릅니다. 각 층 지도를 바꾸며 에스컬레이터 구간을 확인합니다.
 6. 경로 지우기와 다른 목적지 선택으로 이전 경로가 해제되는지 확인합니다.
 
@@ -216,29 +230,27 @@ MALL-WAY/
 
 ## 🧪 검증
 
-### 검증 기록 — 2026-11-05
+### 검증 기록 — 2026-11-06
 
 | 항목 | 결과 |
 | --- | --- |
 | Debug / Release 빌드 | 경고 0 · 오류 0 |
 | Release 시작 경로 | 창 열기와 SQLite 생성 확인 |
 | 최단 비용 비교 | 31개 노드의 모든 출발·도착 조합 961개를 별도 계산과 비교해 일치 |
-| 길찾기 통합 검증 | 경로 연속성, 비용 합계, 15개 목적지 흐름 등을 포함한 6,752개 확인 통과 |
+| 길찾기 통합 검증 | 경로 연속성, 비용 합계, 15개 목적지 흐름 등을 포함한 6,753개 확인 통과 |
 | 기존 기능 회귀 검증 | 검색·카테고리·시설 선택·변경 알림 등 73개 확인 통과 |
 | DB 호환 | 수요일에 생성한 DB와 새 DB에서 조회·길찾기 확인 |
 | WPF 지도 렌더링 | 1층 출발, 3층 도착, 에스컬레이터 안내 화면 확인 |
 
 검증 수에는 경로별 선분 확인과 반복 조합 검사가 포함됩니다. 검증 도구와 렌더링 산출물은 로컬에서 실행한 기록이며 저장소에는 포함하지 않습니다. 실제 단말에서 직접 확인할 때는 위 시연 순서를 사용할 수 있습니다.
 
-## 📍 시연 범위와 다음 작업
+## 📍 시연 범위
 
 현재 지도는 3개 층의 고정 배치로 구성되어 있습니다. 경로는 DB에 지정한 연결과 비용을 기준으로 계산하며, 실제 거리나 소요 시간으로 환산하지 않습니다.
 
-11월 5일 목요일에 MVVM Light 버전의 검색·지도·상세·편의시설·길찾기를 완성했습니다. 11월 6일 금요일에는 완성본을 별도로 복사해 **CommunityToolkit.Mvvm으로 마이그레이션**할 예정입니다. ViewModel의 변경 알림, 명령, 객체 생성 방식을 옮기고 같은 JSON과 SQLite 데이터로 두 버전의 동작을 비교합니다.
-
 ## 📦 저장소 관리
 
-개발은 `feature/development` 하나에서 계속 진행하고, 검증한 작업을 `main`에 `--no-ff`로 병합합니다. 작업 단계는 커밋으로 구분합니다.
+이 저장소의 `main`은 MVVM Light 기준본 가져오기와 Toolkit 전환을 별도 커밋으로 기록합니다.
 
 솔루션, 소스, JSON 설정, 초기 SQL과 README를 관리합니다. `bin/`, `obj/`, `.dotnet/`, 실행 중 생성되는 `*.db`와 관련 파일, 사용자별 IDE 설정은 Git에서 제외합니다.
 

@@ -1,7 +1,5 @@
 using System;
 using System.Windows;
-using CommonServiceLocator;
-using GalaSoft.MvvmLight.Ioc;
 
 namespace MallWay
 {
@@ -15,16 +13,11 @@ namespace MallWay
                 var settings = KioskSettings.Load();
                 var repository = new MapRepository(settings.DatabasePath);
                 repository.Initialize();
-
-                ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-                SimpleIoc.Default.Register(() => settings);
-                SimpleIoc.Default.Register(() => repository);
-                SimpleIoc.Default.Register<RouteService>();
-                SimpleIoc.Default.Register<MainViewModel>();
+                var routeService = new RouteService(repository);
 
                 MainWindow = new MainWindow
                 {
-                    DataContext = ServiceLocator.Current.GetInstance<MainViewModel>()
+                    DataContext = new MainViewModel(settings, repository, routeService)
                 };
                 MainWindow.Show();
             }

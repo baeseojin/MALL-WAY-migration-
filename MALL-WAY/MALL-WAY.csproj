@@ -10,8 +10,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
-    <PackageReference Include="CommonServiceLocator" Version="2.0.2" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.30" />
     <None Update="kiosk-settings.json;Data\initialize.sql" CopyToOutputDirectory="PreserveNewest" />

@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Data.Sqlite;
 
 namespace MallWay
 {
-    public sealed class MainViewModel : ViewModelBase
+    public sealed class MainViewModel : ObservableObject
     {
         private readonly KioskSettings settings;
         private readonly MapRepository repository;
@@ -52,7 +52,7 @@ namespace MallWay
             get => searchText;
             set
             {
-                if (Set(ref searchText, value ?? ""))
+                if (SetProperty(ref searchText, value ?? ""))
                     RefreshResults();
             }
         }
@@ -62,7 +62,7 @@ namespace MallWay
             get => selectedCategory;
             set
             {
-                if (Set(ref selectedCategory, value ?? "전체"))
+                if (SetProperty(ref selectedCategory, value ?? "전체"))
                     RefreshResults();
             }
         }
@@ -117,7 +117,7 @@ namespace MallWay
                 SetRoute(null);
                 if (result == null)
                 {
-                    Set(ref errorMessage, "목적지까지 연결된 경로가 없습니다. 다른 목적지를 선택해 주세요.", nameof(ErrorMessage));
+                    SetProperty(ref errorMessage, "목적지까지 연결된 경로가 없습니다. 다른 목적지를 선택해 주세요.", nameof(ErrorMessage));
                     return;
                 }
                 if (TryShowFloor(result.Start.Floor))
@@ -129,7 +129,7 @@ namespace MallWay
             catch (Exception ex) when (ex is IOException || ex is InvalidDataException || ex is SqliteException)
             {
                 SetRoute(null);
-                Set(ref errorMessage, "경로를 계산하지 못했습니다. 지도 데이터를 확인해 주세요.", nameof(ErrorMessage));
+                SetProperty(ref errorMessage, "경로를 계산하지 못했습니다. 지도 데이터를 확인해 주세요.", nameof(ErrorMessage));
             }
         }
 
@@ -140,26 +140,26 @@ namespace MallWay
                 var nextMap = repository.ReadFloor(floor, settings.StartNodeId);
                 map = nextMap;
                 currentFloor = floor;
-                Set(ref errorMessage, null, nameof(ErrorMessage));
-                RaisePropertyChanged(nameof(Map));
-                RaisePropertyChanged(nameof(CurrentFloor));
-                RaisePropertyChanged(nameof(FloorTitle));
-                RaisePropertyChanged(nameof(KioskFloorLabel));
-                RaisePropertyChanged(nameof(VisibleRouteSteps));
-                RaisePropertyChanged(nameof(DestinationMarkers));
+                SetProperty(ref errorMessage, null, nameof(ErrorMessage));
+                OnPropertyChanged(nameof(Map));
+                OnPropertyChanged(nameof(CurrentFloor));
+                OnPropertyChanged(nameof(FloorTitle));
+                OnPropertyChanged(nameof(KioskFloorLabel));
+                OnPropertyChanged(nameof(VisibleRouteSteps));
+                OnPropertyChanged(nameof(DestinationMarkers));
                 return true;
             }
             catch (Exception ex) when (ex is IOException || ex is InvalidDataException || ex is SqliteException)
             {
-                Set(ref errorMessage, "지도를 불러오지 못했습니다. 다시 선택해 주세요.", nameof(ErrorMessage));
+                SetProperty(ref errorMessage, "지도를 불러오지 못했습니다. 다시 선택해 주세요.", nameof(ErrorMessage));
                 return false;
             }
         }
 
         private void SetFilters(string text, string category)
         {
-            Set(ref searchText, text ?? "", nameof(SearchText));
-            Set(ref selectedCategory, category, nameof(SelectedCategory));
+            SetProperty(ref searchText, text ?? "", nameof(SearchText));
+            SetProperty(ref selectedCategory, category, nameof(SelectedCategory));
             RefreshResults();
         }
 
@@ -172,9 +172,9 @@ namespace MallWay
             if (SelectedPlace != null && !searchResults.Any(place =>
                 place.EntranceNodeId == SelectedDestinationNodeId))
                 SetSelection(null);
-            RaisePropertyChanged(nameof(SearchResults));
-            RaisePropertyChanged(nameof(ResultsSummary));
-            RaisePropertyChanged(nameof(HasNoResults));
+            OnPropertyChanged(nameof(SearchResults));
+            OnPropertyChanged(nameof(ResultsSummary));
+            OnPropertyChanged(nameof(HasNoResults));
         }
 
         private void SetSelection(MapPlace place)
@@ -182,11 +182,11 @@ namespace MallWay
             SetRoute(null);
             selectedPlace = place;
             UpdateHighlights();
-            Set(ref errorMessage, null, nameof(ErrorMessage));
-            RaisePropertyChanged(nameof(SelectedPlace));
-            RaisePropertyChanged(nameof(HasSelection));
-            RaisePropertyChanged(nameof(SelectedDestinationNodeId));
-            FindRouteCommand.RaiseCanExecuteChanged();
+            SetProperty(ref errorMessage, null, nameof(ErrorMessage));
+            OnPropertyChanged(nameof(SelectedPlace));
+            OnPropertyChanged(nameof(HasSelection));
+            OnPropertyChanged(nameof(SelectedDestinationNodeId));
+            FindRouteCommand.NotifyCanExecuteChanged();
         }
 
         private void UpdateHighlights()
@@ -198,12 +198,12 @@ namespace MallWay
         private void SetRoute(RouteResult result)
         {
             route = result;
-            RaisePropertyChanged(nameof(HasRoute));
-            RaisePropertyChanged(nameof(RouteSummary));
-            RaisePropertyChanged(nameof(RouteInstructions));
-            RaisePropertyChanged(nameof(VisibleRouteSteps));
-            RaisePropertyChanged(nameof(DestinationMarkers));
-            ClearRouteCommand.RaiseCanExecuteChanged();
+            OnPropertyChanged(nameof(HasRoute));
+            OnPropertyChanged(nameof(RouteSummary));
+            OnPropertyChanged(nameof(RouteInstructions));
+            OnPropertyChanged(nameof(VisibleRouteSteps));
+            OnPropertyChanged(nameof(DestinationMarkers));
+            ClearRouteCommand.NotifyCanExecuteChanged();
         }
     }
 }
