@@ -12,6 +12,6 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.30" />
-    <None Update="kiosk-settings.json;Data\initialize.sql" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="kiosk-settings.json;Data\initialize.sql;Resources\English.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
